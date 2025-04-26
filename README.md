@@ -1,4 +1,4 @@
-markdown# Health Information System
+# Health Information System
 
 A comprehensive system for managing clients and health programs, designed for healthcare providers to efficiently track patient enrollment in various health initiatives.
 
