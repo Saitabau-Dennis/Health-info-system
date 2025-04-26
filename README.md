@@ -96,25 +96,31 @@ node create-user.js
 ## Screenshots
 
 ### Login Screen
-![Login Screen](Screenshot%202025-04-26%20213845.png)
+![Screenshot 2025-04-26 211907](https://github.com/user-attachments/assets/885c900d-4b45-4777-9ebd-15c0b7f101d3)
 
 ### Dashboard
-![Dashboard Overview](Screenshot%202025-04-26%20213819.png)
+![Screenshot 2025-04-26 212036](https://github.com/user-attachments/assets/8bc64fb1-5960-4fc3-9689-191f1a289a8f)
 
 ### Programs Management
-![Programs Management](Screenshot%202025-04-26%20211907.png)
+![Screenshot 2025-04-26 213819](https://github.com/user-attachments/assets/f0c28ee0-71fe-42fa-b153-dd227b37eede)
+
 
 ### Add New Program
-![Add New Program](Screenshot%202025-04-26%20212036.png)
+![Screenshot 2025-04-26 213845](https://github.com/user-attachments/assets/68f592fc-e1c0-4b5a-94f5-9e635f2eaa2e)
+
 
 ### Clients Management
-![Clients List](Screenshot%202025-04-26%20213744.png)
+![Screenshot 2025-04-26 212111](https://github.com/user-attachments/assets/40379bdb-c9b4-4554-ae12-b8e61143cd08)
+
 
 ### Add New Client
-![Add New Client](Screenshot%202025-04-26%20213711.png)
+![Screenshot 2025-04-26 213629](https://github.com/user-attachments/assets/4b7f75fe-1ba5-45cd-98dc-a2fda0393d9c)
+
 
 ### Client Profile
-![Client Profile](Screenshot%202025-04-26%20212111.png)
+![Screenshot 2025-04-26 213744](https://github.com/user-attachments/assets/154f413e-a13a-4ac2-bbd6-360687aa7a26)
+
 
 ### Program Enrollment
-![Enroll in Program](Screenshot%202025-04-26%20213629.png)
+![Screenshot 2025-04-26 213711](https://github.com/user-attachments/assets/e56c7abd-6157-4a26-b372-4a684a7de7c5)
+
