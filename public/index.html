@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Information System</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles -->
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Health Information System</h1>
+            <div class="space-x-4">
+                <button id="dashboard-tab" class="tab-button bg-blue-700 px-4 py-2 rounded">Dashboard</button>
+                <button id="clients-tab" class="tab-button px-4 py-2 rounded">Clients</button>
+                <button id="programs-tab" class="tab-button px-4 py-2 rounded">Programs</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <!-- Dashboard Tab -->
+        <div id="dashboard-content" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Clients</h2>
+                    <p class="text-3xl font-bold text-blue-600" id="client-count">0</p>
+                    <p class="text-gray-500">Total registered clients</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Programs</h2>
+                    <p class="text-3xl font-bold text-green-600" id="program-count">0</p>
+                    <p class="text-gray-500">Active health programs</p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-semibold mb-4">Enrollments</h2>
+                    <p class="text-3xl font-bold text-purple-600" id="enrollment-count">0</p>
+                    <p class="text-gray-500">Total enrollments</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Tab -->
+        <div id="clients-content" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Manage Clients</h2>
+                <button id="add-client-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add New Client</button>
+            </div>
+            
+            <div class="mb-6">
+                <input type="text" id="client-search" placeholder="Search clients..." class="w-full p-3 border rounded">
+            </div>
+            
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clients-table" class="divide-y divide-gray-200">
+                        <!-- Client rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Programs Tab -->
+        <div id="programs-content" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Health Programs</h2>
+                <button id="add-program-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add New Program</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="programs-grid">
+                <!-- Program cards will be added here -->
+            </div>
+        </div>
+        
+        <!-- Client Details Modal -->
+        <div id="client-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-8 max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold" id="client-modal-title">Client Details</h2>
+                    <button class="close-modal text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="client-modal-content">
+                    <!-- Client details will go here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add/Edit Client Modal -->
+        <div id="add-client-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold" id="add-client-modal-title">Add New Client</h2>
+                    <button class="close-modal text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form id="client-form">
+                    <input type="hidden" id="client-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Name</label>
+                            <input type="text" id="client-name" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Date of Birth</label>
+                            <input type="date" id="client-dob" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Gender</label>
+                            <select id="client-gender" class="w-full p-2 border rounded" required>
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Contact Number</label>
+                            <input type="tel" id="client-contact" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="client-email" class="w-full p-2 border rounded">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Address</label>
+                            <input type="text" id="client-address" class="w-full p-2 border rounded">
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="close-modal mr-4 px-4 py-2 border rounded">Cancel</button>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Program Modal -->
+        <div id="add-program-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold" id="add-program-modal-title">Add New Program</h2>
+                    <button class="close-modal text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form id="program-form">
+                    <input type="hidden" id="program-id">
+                    <div class="grid grid-cols-1 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Program Name</label>
+                            <input type="text" id="program-name" class="w-full p-2 border rounded" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2">Description</label>
+                            <textarea id="program-description" class="w-full p-2 border rounded" rows="4" required></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Start Date</label>
+                                <input type="date" id="program-start-date" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">End Date</label>
+                                <input type="date" id="program-end-date" class="w-full p-2 border rounded">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="program-active" class="mr-2" checked>
+                                <span class="text-gray-700">Active Program</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="close-modal mr-4 px-4 py-2 border rounded">Cancel</button>
+                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Enroll Client Modal -->
+        <div id="enroll-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Enroll in Program</h2>
+                    <button class="close-modal text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form id="enrollment-form">
+                    <input type="hidden" id="enrollment-client-id">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Select Program</label>
+                        <select id="enrollment-program" class="w-full p-2 border rounded" required>
+                            <option value="">Select a program</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Notes</label>
+                        <textarea id="enrollment-notes" class="w-full p-2 border rounded" rows="3"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" class="close-modal mr-4 px-4 py-2 border rounded">Cancel</button>
+                        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Enroll</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
