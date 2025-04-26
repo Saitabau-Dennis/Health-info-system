@@ -4,40 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Health Information System</title>
+    <!-- Inter Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#3B82F6',
+                            dark: '#2563EB'
+                        },
+                        dark: {
+                            100: '#1E1E2E',
+                            200: '#181825',
+                            300: '#11111B',
+                            400: '#313244'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .login-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        
+        /* Background animation */
+        .bg-animation {
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
 </head>
-<body class="bg-blue-50 flex items-center justify-center min-h-screen">
-    <div class="w-full max-w-md">
-        <div class="bg-white shadow-lg rounded-lg p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-blue-700">Health Information System</h1>
-                <p class="text-gray-600 mt-2">Sign in to your account</p>
+<body class="bg-dark-300 min-h-screen bg-animation">
+    <div class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        <!-- Background decorations -->
+        <div class="absolute top-20 right-1/4 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        <div class="absolute bottom-20 left-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        
+        <div class="w-full max-w-md z-10">
+            <div class="flex items-center justify-center mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mr-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                </svg>
             </div>
-            
-            <div id="login-alert" class="hidden mb-4 p-4 rounded text-white"></div>
-            
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
-                    <input type="text" id="username" name="username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        
+            <div class="bg-dark-200 shadow-lg rounded-xl p-8 border border-dark-400">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-white">Welcome back</h2>
+                    <p class="text-gray-400 mt-2">Sign in to your account</p>
                 </div>
                 
-                <div>
-                    <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-                    <input type="password" id="password" name="password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                </div>
+                <div id="login-alert" class="hidden mb-6 p-4 rounded-lg text-white"></div>
                 
-                <div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
-                        Sign In
-                    </button>
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-gray-300 font-medium mb-2">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </div>
+                            <input type="text" id="username" name="username" class="w-full pl-10 p-3 border bg-dark-100 border-dark-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="password" class="block text-gray-300 font-medium">Password</label>
+                            <a href="#" class="text-sm text-blue-400 hover:text-blue-300">Forgot password?</a>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <input type="password" id="password" name="password" class="w-full pl-10 p-3 border bg-dark-100 border-dark-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input id="remember-me" type="checkbox" class="h-4 w-4 rounded border-dark-400 text-blue-600 focus:ring-blue-500 focus:ring-opacity-50 bg-dark-100">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-400">Remember me</label>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            </svg>
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center text-sm text-gray-400">
+                    <p>Don't have an account? <a href="#" class="text-blue-400 hover:text-blue-300 font-medium">Contact your administrator</a>.</p>
                 </div>
-            </form>
-            
-            <div class="mt-6 text-center text-sm text-gray-600">
-                <p>Don't have an account? Contact your administrator.</p>
             </div>
+        
         </div>
     </div>
     
@@ -59,6 +158,12 @@
                 const password = document.getElementById('password').value;
                 
                 try {
+                    // Show loading state
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalButtonText = submitButton.innerHTML;
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Signing in...';
+                    
                     const response = await fetch('/api/auth/login', {
                         method: 'POST',
                         headers: {
@@ -69,24 +174,40 @@
                     
                     const data = await response.json();
                     
+                    // Restore button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                    
                     if (data.success) {
+                        // Show success message before redirect
+                        loginAlert.textContent = "Login successful! Redirecting...";
+                        loginAlert.classList.remove('hidden', 'bg-red-600');
+                        loginAlert.classList.add('bg-green-600');
+                        
                         // Store token and user info
                         localStorage.setItem('token', data.token);
                         localStorage.setItem('user', JSON.stringify(data.user));
                         
-                        // Redirect to dashboard
-                        window.location.href = '/';
+                        // Redirect to dashboard after a brief delay
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
                     } else {
                         // Show error
-                        loginAlert.textContent = data.message;
-                        loginAlert.classList.remove('hidden', 'bg-green-500');
-                        loginAlert.classList.add('bg-red-500');
+                        loginAlert.textContent = data.message || "Invalid username or password";
+                        loginAlert.classList.remove('hidden', 'bg-green-600');
+                        loginAlert.classList.add('bg-red-600');
                     }
                 } catch (error) {
                     console.error('Login error:', error);
                     loginAlert.textContent = 'Failed to connect to server. Please try again.';
-                    loginAlert.classList.remove('hidden', 'bg-green-500');
-                    loginAlert.classList.add('bg-red-500');
+                    loginAlert.classList.remove('hidden', 'bg-green-600');
+                    loginAlert.classList.add('bg-red-600');
+                    
+                    // Restore button state
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
                 }
             });
         });

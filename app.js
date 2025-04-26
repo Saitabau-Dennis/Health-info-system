@@ -1,8 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./models');
-const path = require('path'); // For serving static files
-const { protect } = require('./middleware/auth'); // Import the protect middleware
+const path = require('path'); 
+const { protect } = require('./middleware/auth'); 
 
 // Import routes
 const clientRoutes = require('./routes/clientRoutes');

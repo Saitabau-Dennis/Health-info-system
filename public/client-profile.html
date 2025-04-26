@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Profile - Health Information System</title>
+    <!-- Inter Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#3B82F6',
+                            dark: '#2563EB'
+                        },
+                        dark: {
+                            100: '#1E1E2E',
+                            200: '#181825',
+                            300: '#11111B',
+                            400: '#313244'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Sidebar active link */
+        .sidebar-link.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3B82F6;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #11111B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #313244;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3B82F6;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-dark-300 min-h-screen text-gray-300 flex">
+    <!-- Sidebar -->
+    <aside class="bg-dark-200 w-64 fixed h-screen flex flex-col border-r border-dark-400 shadow-lg z-30 transition-all duration-300" id="sidebar">
+        <div class="p-4 border-b border-dark-400 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+            <h1 class="text-lg font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Health Info System</h1>
+        </div>
+        
+        <div class="py-4 flex-grow overflow-y-auto">
+            <nav class="px-4 space-y-1">
+                <a href="/" class="sidebar-link w-full text-left flex items-center px-4 py-3 text-gray-400 rounded-md hover:bg-dark-400 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/" id="clients-link" class="sidebar-link active w-full text-left flex items-center px-4 py-3 text-gray-200 rounded-md hover:bg-dark-400 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Clients
+                </a>
+                <a href="/" class="sidebar-link w-full text-left flex items-center px-4 py-3 text-gray-400 rounded-md hover:bg-dark-400 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    Programs
+                </a>
+            </nav>
+        </div>
+        
+        <div class="p-4 border-t border-dark-400">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold mr-3" id="user-avatar">
+                    U
+                </div>
+                <div>
+                    <p id="user-name" class="font-medium text-blue-400"></p>
+                    <p id="user-role" class="text-xs text-gray-500"></p>
+                </div>
+            </div>
+            <button id="logout-btn" class="w-full flex items-center justify-center bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-2 rounded-md text-sm transition duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Mobile sidebar toggle -->
+    <div class="fixed bottom-4 right-4 lg:hidden z-40">
+        <button id="sidebar-toggle" class="bg-blue-600 text-white p-3 rounded-full shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-64 transition-all duration-300" id="main-content">
+        <header class="bg-dark-200 border-b border-dark-400 py-4 px-6 flex justify-between items-center sticky top-0 z-20">
+            <div class="flex items-center">
+                <a href="/" class="text-gray-400 hover:text-white mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                <h1 class="text-xl font-bold text-white" id="client-name">Client Profile</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button class="text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Left Column - Client Info -->
+                <div class="lg:col-span-1">
+                    <div class="bg-dark-200 rounded-xl shadow-lg overflow-hidden border border-dark-400">
+                        <div class="p-6 text-center">
+                            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-600/20 mb-4 text-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h2 id="client-full-name" class="text-xl font-bold text-white mb-1">Loading...</h2>
+                            <p id="client-id-display" class="text-gray-400 text-sm mb-4">Client #</p>
+                            <div class="flex justify-center">
+                                <button id="edit-client-btn" class="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-4 py-2 rounded-md text-sm transition duration-200 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Edit Profile
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-dark-400">
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <p class="text-gray-400 text-xs mb-1">Date of Birth</p>
+                                    <p id="client-dob" class="font-medium text-white">-</p>
+                                </div>
+                                <div class="mb-3">
+                                    <p class="text-gray-400 text-xs mb-1">Gender</p>
+                                    <p id="client-gender" class="font-medium text-white">-</p>
+                                </div>
+                                <div class="mb-3">
+                                    <p class="text-gray-400 text-xs mb-1">Registration Date</p>
+                                    <p id="client-registration" class="font-medium text-white">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-dark-400">
+                            <div class="p-4">
+                                <div class="mb-3">
+                                    <p class="text-gray-400 text-xs mb-1">Contact Number</p>
+                                    <p id="client-contact" class="font-medium text-white">-</p>
+                                </div>
+                                <div class="mb-3">
+                                    <p class="text-gray-400 text-xs mb-1">Email</p>
+                                    <p id="client-email" class="font-medium text-white">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-xs mb-1">Address</p>
+                                    <p id="client-address" class="font-medium text-white">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Tabs -->
+                <div class="lg:col-span-3">
+                    <div class="bg-dark-200 rounded-xl shadow-lg border border-dark-400 overflow-hidden">
+                        <div class="border-b border-dark-400">
+                            <div class="flex">
+                                <button id="programs-tab" class="px-6 py-4 text-white font-medium border-b-2 border-blue-500">
+                                    Enrolled Programs
+                                </button>
+                                <button id="history-tab" class="px-6 py-4 text-gray-400 hover:text-white">
+                                    History
+                                </button>
+                                <button id="notes-tab" class="px-6 py-4 text-gray-400 hover:text-white">
+                                    Notes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Programs Tab -->
+                        <div id="programs-content" class="tab-content active">
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="text-lg font-semibold text-white">Current Programs</h3>
+                                    <button id="enroll-client-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm transition duration-200 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        Enroll in Program
+                                    </button>
+                                </div>
+                                
+                                <div class="border border-dark-400 rounded-lg overflow-hidden">
+                                    <table class="w-full">
+                                        <thead class="bg-dark-100">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Program</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Enrollment Date</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Notes</th>
+                                                <th class="px-4 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="client-programs" class="divide-y divide-dark-400">
+                                            <tr>
+                                                <td colspan="5" class="px-4 py-3 text-center text-gray-500">Loading programs...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- History Tab -->
+                        <div id="history-content" class="tab-content">
+                            <div class="p-6">
+                                <div class="bg-dark-100 rounded-lg p-4 border border-dark-400 text-gray-400 text-center">
+                                    History tab coming soon
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notes Tab -->
+                        <div id="notes-content" class="tab-content">
+                            <div class="p-6">
+                                <div class="mb-4">
+                                    <textarea id="client-notes" placeholder="Add a note about this client..." class="w-full p-4 bg-dark-100 border border-dark-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4"></textarea>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button id="save-note-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition duration-200">
+                                        Save Note
+                                    </button>
+                                </div>
+                                
+                                <div class="mt-6 space-y-4" id="notes-list">
+                                    <div class="bg-dark-100 rounded-lg p-4 border border-dark-400 text-gray-400 text-center">
+                                        No notes found
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Client Modal -->
+    <div id="add-client-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-dark-200 rounded-xl p-8 max-w-2xl w-full border border-dark-400">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-white" id="add-client-modal-title">Edit Client</h2>
+                <button class="close-modal text-gray-400 hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="client-form">
+                <input type="hidden" id="client-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-300 mb-2">Name</label>
+                        <input type="text" id="edit-client-name" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Date of Birth</label>
+                        <input type="date" id="edit-client-dob" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Gender</label>
+                        <select id="edit-client-gender" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Contact Number</label>
+                        <input type="tel" id="edit-client-contact" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Email</label>
+                        <input type="email" id="edit-client-email" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 mb-2">Address</label>
+                        <input type="text" id="edit-client-address" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" class="close-modal mr-4 px-4 py-2 border border-dark-400 text-gray-300 rounded-md hover:bg-dark-100 transition duration-200">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enroll Client Modal -->
+    <div id="enroll-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-dark-200 rounded-xl p-8 max-w-2xl w-full border border-dark-400">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-white">Enroll in Program</h2>
+                <button class="close-modal text-gray-400 hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="enrollment-form">
+                <input type="hidden" id="enrollment-client-id">
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2">Select Program</label>
+                    <select id="enrollment-program" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Select a program</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-300 mb-2">Notes</label>
+                    <textarea id="enrollment-notes" class="w-full p-2 bg-dark-100 border border-dark-400 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" class="close-modal mr-4 px-4 py-2 border border-dark-400 text-gray-300 rounded-md hover:bg-dark-100 transition duration-200">Cancel</button>
+                    <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition duration-200">Enroll</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="client-profile.js"></script>
+    <script>
+        // Handle sidebar toggle for responsive design
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (sidebar.classList.contains('translate-x-0') || !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('translate-x-0');
+                sidebar.classList.add('-translate-x-full');
+                mainContent.classList.remove('ml-0');
+                mainContent.classList.add('ml-0');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                mainContent.classList.remove('ml-0');
+                mainContent.classList.add('ml-0');
+            }
+        });
+        
+        // For small screens, initialize sidebar as hidden
+        function adjustForScreenSize() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+                mainContent.classList.remove('ml-64');
+                mainContent.classList.add('ml-0');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                mainContent.classList.remove('ml-0');
+                mainContent.classList.add('ml-64');
+            }
+        }
+        
+        // Run on page load and resize
+        window.addEventListener('resize', adjustForScreenSize);
+        adjustForScreenSize();
+        
+        // Tab switching in the client profile
+        const tabButtons = [
+            document.getElementById('programs-tab'),
+            document.getElementById('history-tab'),
+            document.getElementById('notes-tab')
+        ];
+        
+        const tabContents = [
+            document.getElementById('programs-content'),
+            document.getElementById('history-content'),
+            document.getElementById('notes-content')
+        ];
+        
+        tabButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Reset all tabs
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'text-white');
+                    btn.classList.add('text-gray-400');
+                });
+                
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Set active tab
+                button.classList.add('border-blue-500', 'text-white');
+                button.classList.remove('text-gray-400');
+                tabContents[index].classList.add('active');
+            });
+        });
+        
+        // Modal functionality
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('add-client-modal').classList.add('hidden');
+                document.getElementById('enroll-modal').classList.add('hidden');
+            });
+        });
+        
+        // Edit client button
+        document.getElementById('edit-client-btn').addEventListener('click', () => {
+            document.getElementById('add-client-modal').classList.remove('hidden');
+        });
+        
+        // Enroll client button
+        document.getElementById('enroll-client-btn').addEventListener('click', () => {
+            document.getElementById('enroll-modal').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

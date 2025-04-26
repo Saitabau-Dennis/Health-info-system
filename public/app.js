@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (user) {
         document.getElementById('user-name').textContent = user.fullName;
         document.getElementById('user-role').textContent = user.role;
+        document.getElementById('user-avatar').textContent = user.fullName.charAt(0);
     }
     
     // Add logout event listener
@@ -52,17 +53,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the rest of the app
     init();
 });
+
 // Global state
 let clients = [];
 let programs = [];
 let enrollments = [];
 
-// DOM Elements - Tabs
-const tabButtons = document.querySelectorAll('.tab-button');
+// DOM Elements - Tabs (updated selectors to match new sidebar design)
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
 const tabContents = document.querySelectorAll('.tab-content');
 
 // DOM Elements - Modals
-const clientModal = document.getElementById('client-modal');
 const addClientModal = document.getElementById('add-client-modal');
 const addProgramModal = document.getElementById('add-program-modal');
 const enrollModal = document.getElementById('enroll-modal');
@@ -89,19 +90,31 @@ const addProgramBtn = document.getElementById('add-program-btn');
 // DOM Elements - Search
 const clientSearch = document.getElementById('client-search');
 
-// Tab Functionality
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        // Remove active class from all tabs
-        tabButtons.forEach(btn => btn.classList.remove('bg-blue-700'));
+// Tab Functionality (updated to work with new sidebar design)
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        // Remove active class from all links
+        sidebarLinks.forEach(l => {
+            l.classList.remove('active');
+            l.classList.add('text-gray-400');
+            l.classList.remove('text-gray-200');
+        });
+        
+        // Add active class to clicked link
+        link.classList.add('active');
+        link.classList.remove('text-gray-400');
+        link.classList.add('text-gray-200');
+        
+        // Hide all tab contents
         tabContents.forEach(content => content.classList.remove('active'));
         
-        // Add active class to clicked tab
-        button.classList.add('bg-blue-700');
-        
         // Show corresponding content
-        const contentId = button.id.replace('-tab', '-content');
+        const contentId = link.id.replace('-tab', '-content');
         document.getElementById(contentId).classList.add('active');
+        
+        // Update page title
+        const pageTitle = document.getElementById('page-title');
+        pageTitle.textContent = link.textContent.trim();
         
         // Load data for the tab
         if (contentId === 'clients-content') {
@@ -117,7 +130,6 @@ tabButtons.forEach(button => {
 // Modal Functionality
 closeModalButtons.forEach(button => {
     button.addEventListener('click', () => {
-        clientModal.classList.add('hidden');
         addClientModal.classList.add('hidden');
         addProgramModal.classList.add('hidden');
         enrollModal.classList.add('hidden');
@@ -168,13 +180,77 @@ async function fetchDashboardData() {
         const programsData = await programsRes.json();
         const enrollmentsData = await enrollmentsRes.json();
         
-        clientCount.textContent = clientsData.count;
-        programCount.textContent = programsData.count;
-        enrollmentCount.textContent = enrollmentsData.count;
+        console.log('Dashboard data:', { clientsData, programsData, enrollmentsData });
+        
+        if (clientCount) clientCount.textContent = clientsData.count || 0;
+        if (programCount) programCount.textContent = programsData.count || 0;
+        
+        // Ensure the enrollment count is displayed properly
+        if (enrollmentCount) {
+            // If enrollmentsData.count exists, use it; otherwise count the array length
+            const count = enrollmentsData.count !== undefined ? 
+                enrollmentsData.count : 
+                (enrollmentsData.data ? enrollmentsData.data.length : 0);
+            
+            enrollmentCount.textContent = count;
+            console.log('Setting enrollment count to:', count);
+        }
+        
+        // Store enrollments data for later use
+        if (enrollmentsData.data) {
+            enrollments = enrollmentsData.data;
+        }
+        
+        // Fetch recent activities for dashboard
+        fetchRecentActivities();
         
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         showAlert('Failed to load dashboard data');
+    }
+}
+
+// Fetch recent activities (placeholder function)
+async function fetchRecentActivities() {
+    // In a real implementation, this would fetch from an API endpoint
+    const recentActivitiesContainer = document.getElementById('recent-activities');
+    if (!recentActivitiesContainer) return;
+    
+    // For now we'll just use placeholder data
+    const activeProgramsList = document.getElementById('active-programs-list');
+    if (activeProgramsList) {
+        activeProgramsList.innerHTML = '';
+        
+        // Get the first 3 active programs
+        const activePrograms = programs.filter(p => p.isActive).slice(0, 3);
+        
+        if (activePrograms.length === 0) {
+            activeProgramsList.innerHTML = '<p class="text-gray-400 text-center py-4">No active programs</p>';
+            return;
+        }
+        
+        activePrograms.forEach(program => {
+            const item = document.createElement('div');
+            item.className = 'p-3 bg-dark-100/50 rounded-lg border border-dark-400';
+            item.innerHTML = `
+                <div class="flex justify-between items-center">
+                    <h4 class="font-medium text-white">${program.name}</h4>
+                    <span class="text-xs text-green-400 bg-green-900/30 px-2 py-1 rounded">Active</span>
+                </div>
+                <p class="text-sm text-gray-400 mt-1 line-clamp-1">${program.description}</p>
+            `;
+            activeProgramsList.appendChild(item);
+        });
+        
+        // Add "View all" link
+        const viewAllLink = document.createElement('div');
+        viewAllLink.className = 'mt-3 text-center';
+        viewAllLink.innerHTML = '<a href="#" class="text-blue-400 text-sm hover:underline">View all programs</a>';
+        viewAllLink.querySelector('a').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('programs-tab').click();
+        });
+        activeProgramsList.appendChild(viewAllLink);
     }
 }
 
@@ -217,28 +293,9 @@ async function fetchPrograms() {
     }
 }
 
-// Get client details including programs
-async function fetchClientDetails(clientId) {
-    try {
-        const [clientRes, programsRes] = await Promise.all([
-            fetchWithAuth(`${API_URL}/clients/${clientId}`),
-            fetchWithAuth(`${API_URL}/clients/${clientId}/programs`)
-        ]);
-        
-        const clientData = await clientRes.json();
-        const programsData = await programsRes.json();
-        
-        if (clientData.success && programsData.success) {
-            renderClientDetails(clientData.data, programsData.data);
-            clientModal.classList.remove('hidden');
-        } else {
-            console.error('Failed to fetch client details');
-            showAlert('Failed to load client details');
-        }
-    } catch (error) {
-        console.error('Error fetching client details:', error);
-        showAlert('Failed to connect to server');
-    }
+// Navigate to client profile page
+function navigateToClientProfile(clientId) {
+    window.location.href = `/client-profile.html?id=${clientId}`;
 }
 
 // Form Handlers
@@ -364,7 +421,8 @@ async function handleEnrollmentFormSubmit(event) {
         if (data.success) {
             enrollModal.classList.add('hidden');
             showAlert('Client enrolled successfully', 'success');
-            fetchClientDetails(enrollmentData.clientId);
+            // Navigate to client profile page after enrollment
+            navigateToClientProfile(enrollmentData.clientId);
             fetchDashboardData();
         } else {
             console.error('Failed to enroll client:', data.message);
@@ -385,7 +443,7 @@ function renderClientsTable(clientsList) {
     if (clientsList.length === 0) {
         clientsTable.innerHTML = `
             <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">No clients found</td>
+                <td colspan="5" class="px-6 py-4 text-center text-gray-400">No clients found</td>
             </tr>
         `;
         return;
@@ -393,16 +451,22 @@ function renderClientsTable(clientsList) {
     
     clientsList.forEach(client => {
         const row = document.createElement('tr');
-        row.className = 'bg-white';
+        row.className = 'hover:bg-dark-100';
         row.innerHTML = `
             <td class="px-6 py-4 whitespace-nowrap">${client.id}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${client.name}</td>
+            <td class="px-6 py-4 whitespace-nowrap font-medium text-white">${client.name}</td>
             <td class="px-6 py-4 whitespace-nowrap">${client.gender}</td>
             <td class="px-6 py-4 whitespace-nowrap">${client.contactNumber || '-'}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
-                <button class="view-client text-blue-600 hover:text-blue-800" data-id="${client.id}">View</button>
-                <button class="edit-client text-yellow-600 hover:text-yellow-800" data-id="${client.id}">Edit</button>
-                <button class="delete-client text-red-600 hover:text-red-800" data-id="${client.id}">Delete</button>
+                <button class="view-client bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-3 py-1.5 rounded text-sm" data-id="${client.id}">
+                    View Profile
+                </button>
+                <button class="edit-client bg-dark-100 hover:bg-dark-400 px-3 py-1.5 rounded text-sm" data-id="${client.id}">
+                    Edit
+                </button>
+                <button class="delete-client bg-red-600/20 text-red-400 hover:bg-red-600/30 px-3 py-1.5 rounded text-sm" data-id="${client.id}">
+                    Delete
+                </button>
             </td>
         `;
         
@@ -411,7 +475,7 @@ function renderClientsTable(clientsList) {
     
     // Add event listeners to buttons
     document.querySelectorAll('.view-client').forEach(button => {
-        button.addEventListener('click', () => fetchClientDetails(button.dataset.id));
+        button.addEventListener('click', () => navigateToClientProfile(button.dataset.id));
     });
     
     document.querySelectorAll('.edit-client').forEach(button => {
@@ -429,7 +493,7 @@ function renderProgramsGrid(programsList) {
     
     if (programsList.length === 0) {
         programsGrid.innerHTML = `
-            <div class="col-span-full text-center text-gray-500 py-8">
+            <div class="col-span-full text-center text-gray-400 py-8">
                 No programs found
             </div>
         `;
@@ -438,7 +502,7 @@ function renderProgramsGrid(programsList) {
     
     programsList.forEach(program => {
         const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow overflow-hidden';
+        card.className = 'bg-dark-200 rounded-xl shadow-lg overflow-hidden border border-dark-400 hover:-translate-y-1 transition-all duration-300';
         
         // Format dates
         const startDate = new Date(program.startDate).toLocaleDateString();
@@ -447,20 +511,20 @@ function renderProgramsGrid(programsList) {
         card.innerHTML = `
             <div class="p-6">
                 <div class="flex justify-between items-start">
-                    <h3 class="text-xl font-semibold mb-2">${program.name}</h3>
-                    <span class="px-2 py-1 text-xs rounded ${program.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    <h3 class="text-xl font-semibold mb-2 text-white">${program.name}</h3>
+                    <span class="px-2 py-1 text-xs rounded ${program.isActive ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}">
                         ${program.isActive ? 'Active' : 'Inactive'}
                     </span>
                 </div>
-                <p class="text-gray-600 mb-4">${program.description}</p>
+                <p class="text-gray-400 mb-4">${program.description}</p>
                 <div class="text-sm text-gray-500">
                     <p>Start: ${startDate}</p>
                     <p>End: ${endDate}</p>
                 </div>
             </div>
-            <div class="border-t px-6 py-3 bg-gray-50 flex justify-end space-x-2">
-                <button class="edit-program text-yellow-600 hover:text-yellow-800" data-id="${program.id}">Edit</button>
-                <button class="delete-program text-red-600 hover:text-red-800" data-id="${program.id}">Delete</button>
+            <div class="border-t border-dark-400 px-6 py-3 bg-dark-300 flex justify-end space-x-2">
+                <button class="edit-program text-blue-400 hover:underline" data-id="${program.id}">Edit</button>
+                <button class="delete-program text-red-400 hover:underline" data-id="${program.id}">Delete</button>
             </div>
         `;
         
@@ -477,97 +541,11 @@ function renderProgramsGrid(programsList) {
     });
 }
 
-// Render client details
-function renderClientDetails(client, programs) {
-    const modalContent = document.getElementById('client-modal-content');
-    const birthDate = new Date(client.dateOfBirth).toLocaleDateString();
-    const regDate = new Date(client.registrationDate).toLocaleDateString();
-    
-    document.getElementById('client-modal-title').textContent = client.name;
-    
-    modalContent.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div>
-                <p class="text-gray-500 text-sm">Date of Birth</p>
-                <p>${birthDate}</p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-sm">Gender</p>
-                <p>${client.gender}</p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-sm">Contact Number</p>
-                <p>${client.contactNumber || '-'}</p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-sm">Email</p>
-                <p>${client.email || '-'}</p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-sm">Address</p>
-                <p>${client.address ? client.address.value || '-' : '-'}</p>
-            </div>
-            <div>
-                <p class="text-gray-500 text-sm">Registration Date</p>
-                <p>${regDate}</p>
-            </div>
-        </div>
-        
-        <div class="mb-4">
-            <div class="flex justify-between items-center mb-2">
-                <h3 class="text-lg font-semibold">Enrolled Programs</h3>
-                <button id="enroll-client-btn" class="bg-purple-600 text-white px-3 py-1 rounded text-sm" data-id="${client.id}">
-                    Enroll in Program
-                </button>
-            </div>
-            
-            <div class="border rounded overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Program</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enrollment Date</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        ${programs.length === 0 ? 
-                            `<tr><td colspan="4" class="px-4 py-3 text-center text-gray-500">Not enrolled in any programs</td></tr>` :
-                            programs.map(program => `
-                                <tr>
-                                    <td class="px-4 py-3">${program.name}</td>
-                                    <td class="px-4 py-3">${new Date(program.Enrollment.enrollmentDate).toLocaleDateString()}</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-2 py-1 text-xs rounded ${
-                                            program.Enrollment.status === 'Active' ? 'bg-green-100 text-green-800' : 
-                                            program.Enrollment.status === 'Completed' ? 'bg-blue-100 text-blue-800' : 
-                                            'bg-red-100 text-red-800'
-                                        }">
-                                            ${program.Enrollment.status}
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3">${program.Enrollment.notes || '-'}</td>
-                                </tr>
-                            `).join('')
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    
-    // Add event listener to enroll button
-    document.getElementById('enroll-client-btn').addEventListener('click', () => {
-        document.getElementById('enrollment-client-id').value = client.id;
-        updateEnrollmentProgramDropdown();
-        enrollModal.classList.remove('hidden');
-    });
-}
-
 // Update the program dropdown in enrollment modal
 function updateEnrollmentProgramDropdown() {
     const programDropdown = document.getElementById('enrollment-program');
+    if (!programDropdown) return;
+    
     programDropdown.innerHTML = '<option value="">Select a program</option>';
     
     programs.forEach(program => {
@@ -706,8 +684,8 @@ function formatDateForInput(dateString) {
 // Show alert message
 function showAlert(message, type = 'error') {
     const alertDiv = document.createElement('div');
-    alertDiv.className = `fixed top-4 right-4 p-4 rounded shadow-lg ${
-        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    alertDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
     }`;
     alertDiv.textContent = message;
     
@@ -729,6 +707,14 @@ function init() {
     
     // Load programs data (needed for enrollment dropdown)
     fetchPrograms();
+    
+    // Initialize welcome button action
+    const newClientBtn = document.querySelector('#dashboard-content .bg-blue-600');
+    if (newClientBtn) {
+        newClientBtn.addEventListener('click', () => {
+            document.getElementById('add-client-btn').click();
+        });
+    }
 }
 
 // Start the application
