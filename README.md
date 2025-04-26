@@ -92,3 +92,29 @@ node create-user.js
 - CORS protection
 - Environment variable protection for sensitive credentials
 - Input validation and sanitization
+
+## Screenshots
+
+### Login Screen
+![Login Screen](Screenshot%202025-04-26%20213845.png)
+
+### Dashboard
+![Dashboard Overview](Screenshot%202025-04-26%20213819.png)
+
+### Programs Management
+![Programs Management](Screenshot%202025-04-26%20211907.png)
+
+### Add New Program
+![Add New Program](Screenshot%202025-04-26%20212036.png)
+
+### Clients Management
+![Clients List](Screenshot%202025-04-26%20213744.png)
+
+### Add New Client
+![Add New Client](Screenshot%202025-04-26%20213711.png)
+
+### Client Profile
+![Client Profile](Screenshot%202025-04-26%20212111.png)
+
+### Program Enrollment
+![Enroll in Program](Screenshot%202025-04-26%20213629.png)
