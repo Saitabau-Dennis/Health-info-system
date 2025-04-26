@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Health Information System</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md">
+        <div class="bg-white shadow-lg rounded-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-blue-700">Health Information System</h1>
+                <p class="text-gray-600 mt-2">Sign in to your account</p>
+            </div>
+            
+            <div id="login-alert" class="hidden mb-4 p-4 rounded text-white"></div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+                    <input type="text" id="username" name="username" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                    <input type="password" id="password" name="password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center text-sm text-gray-600">
+                <p>Don't have an account? Contact your administrator.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = '/';
+            }
+            
+            const loginForm = document.getElementById('login-form');
+            const loginAlert = document.getElementById('login-alert');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Store token and user info
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        
+                        // Redirect to dashboard
+                        window.location.href = '/';
+                    } else {
+                        // Show error
+                        loginAlert.textContent = data.message;
+                        loginAlert.classList.remove('hidden', 'bg-green-500');
+                        loginAlert.classList.add('bg-red-500');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    loginAlert.textContent = 'Failed to connect to server. Please try again.';
+                    loginAlert.classList.remove('hidden', 'bg-green-500');
+                    loginAlert.classList.add('bg-red-500');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

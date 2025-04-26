@@ -1,6 +1,57 @@
 // API base URL - change this if your backend runs on a different port
 const API_URL = 'http://localhost:3000/api';
+// Check if user is logged in
+function checkAuth() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login';
+        return false;
+    }
+    return true;
+}
 
+// Add token to all fetch requests
+function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    if (!options.headers) {
+        options.headers = {};
+    }
+    
+    options.headers['Authorization'] = `Bearer ${token}`;
+    return fetch(url, options);
+}
+
+// Handle logout
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+}
+
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (!checkAuth()) {
+        return;
+    }
+    
+    // Display user info
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+        document.getElementById('user-name').textContent = user.fullName;
+        document.getElementById('user-role').textContent = user.role;
+    }
+    
+    // Add logout event listener
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    
+    // Initialize the rest of the app
+    init();
+});
 // Global state
 let clients = [];
 let programs = [];
@@ -108,9 +159,9 @@ clientSearch.addEventListener('input', () => {
 async function fetchDashboardData() {
     try {
         const [clientsRes, programsRes, enrollmentsRes] = await Promise.all([
-            fetch(`${API_URL}/clients`),
-            fetch(`${API_URL}/programs`),
-            fetch(`${API_URL}/enrollments`)
+            fetchWithAuth(`${API_URL}/clients`),
+            fetchWithAuth(`${API_URL}/programs`),
+            fetchWithAuth(`${API_URL}/enrollments`)
         ]);
         
         const clientsData = await clientsRes.json();
@@ -130,7 +181,7 @@ async function fetchDashboardData() {
 // Fetch clients
 async function fetchClients() {
     try {
-        const response = await fetch(`${API_URL}/clients`);
+        const response = await fetchWithAuth(`${API_URL}/clients`);
         const data = await response.json();
         
         if (data.success) {
@@ -149,7 +200,7 @@ async function fetchClients() {
 // Fetch programs
 async function fetchPrograms() {
     try {
-        const response = await fetch(`${API_URL}/programs`);
+        const response = await fetchWithAuth(`${API_URL}/programs`);
         const data = await response.json();
         
         if (data.success) {
@@ -170,8 +221,8 @@ async function fetchPrograms() {
 async function fetchClientDetails(clientId) {
     try {
         const [clientRes, programsRes] = await Promise.all([
-            fetch(`${API_URL}/clients/${clientId}`),
-            fetch(`${API_URL}/clients/${clientId}/programs`)
+            fetchWithAuth(`${API_URL}/clients/${clientId}`),
+            fetchWithAuth(`${API_URL}/clients/${clientId}/programs`)
         ]);
         
         const clientData = await clientRes.json();
@@ -217,7 +268,7 @@ async function handleClientFormSubmit(event) {
             method = 'PUT';
         }
         
-        const response = await fetch(url, {
+        const response = await fetchWithAuth(url, {
             method,
             headers: {
                 'Content-Type': 'application/json'
@@ -264,7 +315,7 @@ async function handleProgramFormSubmit(event) {
             method = 'PUT';
         }
         
-        const response = await fetch(url, {
+        const response = await fetchWithAuth(url, {
             method,
             headers: {
                 'Content-Type': 'application/json'
@@ -300,7 +351,7 @@ async function handleEnrollmentFormSubmit(event) {
     };
     
     try {
-        const response = await fetch(`${API_URL}/enrollments`, {
+        const response = await fetchWithAuth(`${API_URL}/enrollments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -532,7 +583,7 @@ function updateEnrollmentProgramDropdown() {
 // Edit client
 async function editClient(clientId) {
     try {
-        const response = await fetch(`${API_URL}/clients/${clientId}`);
+        const response = await fetchWithAuth(`${API_URL}/clients/${clientId}`);
         const data = await response.json();
         
         if (data.success) {
@@ -563,7 +614,7 @@ async function editClient(clientId) {
 // Edit program
 async function editProgram(programId) {
     try {
-        const response = await fetch(`${API_URL}/programs/${programId}`);
+        const response = await fetchWithAuth(`${API_URL}/programs/${programId}`);
         const data = await response.json();
         
         if (data.success) {
@@ -597,7 +648,7 @@ async function deleteClient(clientId) {
     }
     
     try {
-        const response = await fetch(`${API_URL}/clients/${clientId}`, {
+        const response = await fetchWithAuth(`${API_URL}/clients/${clientId}`, {
             method: 'DELETE'
         });
         
@@ -624,7 +675,7 @@ async function deleteProgram(programId) {
     }
     
     try {
-        const response = await fetch(`${API_URL}/programs/${programId}`, {
+        const response = await fetchWithAuth(`${API_URL}/programs/${programId}`, {
             method: 'DELETE'
         });
         
